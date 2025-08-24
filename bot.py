@@ -50,22 +50,28 @@ TIME_PATTERNS = [
     "%I%p",     # 8am
 ]
 
-def _parse_time_to_dt(time_str: str, base_date: datetime) -> datetime | None:
-    # Преобразует строку времени вида '8:30am' к datetime в TIMEZONE на дату base_date.
-    # Возвращает None, если время неконкретное (All Day, Tentative и т.п.).
-    clean = time_str.strip().lower()
-    if not clean or clean in {"all day", "bank holiday", "tentative", "day", "unscheduled", "—", "-"}:
-        return None
-    clean = clean.replace(" ", "")
-    for pat in TIME_PATTERNS:
-        try:
-            t = datetime.strptime(clean, pat)
-            dt = datetime(year=base_date.year, month=base_date.month, day=base_date.day,
-                          hour=t.hour, minute=t.minute, tzinfo=tz)
-            return dt
-        except Exception:
-            continue
-    return None
+def parse_forex_calendar():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'DNT': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'TE': 'trailers'
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # ... остальной код
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        return []
 
 def _cell_text(el) -> str:
     if not el:
