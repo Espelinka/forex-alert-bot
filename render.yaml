@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: forex-alert-bot
+    runtime: python
+    envVars:
+      - key: TELEGRAM_TOKEN
+        generateValue: true
+      - key: CHAT_ID
+        generateValue: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    plan: free
